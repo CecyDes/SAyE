@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Models\Route;
 use App\Models\RoutePoint;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 
 class RouteController extends Controller
 {
@@ -16,23 +17,38 @@ class RouteController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $request->validate([
             'name' => 'required|string|max:255',
             'points' => 'required|array|min:2',
-            'points.*.latitude' => 'required|numeric',
-            'points.*.longitude' => 'required|numeric',
+            'points.*.latitude' => 'required|numeric|between:-90,90',
+            'points.*.longitude' => 'required|numeric|between:-180,180',
         ]);
 
-        $route = Route::create(['name' => $validated['name']]);
+        return DB::transaction(function () use ($request) {
+            $route = Route::create(['name' => $request->name]);
 
-        foreach ($validated['points'] as $index => $point) {
-            $route->points()->create([
-                'latitude' => $point['latitude'],
-                'longitude' => $point['longitude'],
-                'order' => $index,
-            ]);
-        }
+            foreach ($request->points as $point) {
+                RoutePoint::create([
+                    'route_id' => $route->id,
+                    'latitude' => $point['latitude'],
+                    'longitude' => $point['longitude'],
+                ]);
+            }
 
+            return $route->load('points');
+        });
+    }
+
+    public function show(Route $route)
+    {
         return $route->load('points');
+    }
+
+    public function destroy(Route $route)
+    {
+        $route->points()->delete();
+        $route->delete();
+
+        return response()->json(null, 204);
     }
 }

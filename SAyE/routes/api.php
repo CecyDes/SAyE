@@ -1,13 +1,18 @@
 <?php
 
+use App\Http\Controllers\Api\AssemblyStationController;
 use App\Http\Controllers\Api\ChargingStationController;
+use App\Http\Controllers\Api\DistributorController;
+use App\Http\Controllers\Api\FactoryController;
 use App\Http\Controllers\Api\RouteController;
+use App\Http\Controllers\Api\ShipmentController;
+use App\Http\Controllers\Api\SupplierController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/stations', [ChargingStationController::class, 'index']);
-Route::post('/stations', [ChargingStationController::class, 'store']);
-Route::delete('/stations/{id}', [ChargingStationController::class, 'destroy']);
-Route::put('/stations/{id}', [ChargingStationController::class, 'update']);
-
-Route::get('/routes', [RouteController::class, 'index']);
-Route::post('/routes', [RouteController::class, 'store']);
+Route::apiResource('stations', ChargingStationController::class);
+Route::apiResource('routes', RouteController::class);
+Route::apiResource('suppliers', SupplierController::class);
+Route::apiResource('distributors', DistributorController::class);
+Route::apiResource('factories', FactoryController::class);
+Route::apiResource('assembly-stations', AssemblyStationController::class);
+Route::apiResource('shipments', ShipmentController::class);

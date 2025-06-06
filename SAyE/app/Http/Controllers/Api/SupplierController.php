@@ -3,50 +3,50 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\ChargingStation;
+use App\Models\Supplier;
 use Illuminate\Http\Request;
 
-class ChargingStationController extends Controller
+class SupplierController extends Controller
 {
     public function index()
     {
-        return ChargingStation::all();
+        return Supplier::all();
     }
 
     public function store(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'type' => 'required|string|in:carga,bateria',
+            'component_type' => 'required|string|max:255',
             'latitude' => 'required|numeric|between:-90,90',
             'longitude' => 'required|numeric|between:-180,180',
         ]);
 
-        return ChargingStation::create($request->all());
+        return Supplier::create($request->all());
     }
 
-    public function show(ChargingStation $station)
+    public function show(Supplier $supplier)
     {
-        return $station;
+        return $supplier;
     }
 
-    public function update(Request $request, ChargingStation $station)
+    public function update(Request $request, Supplier $supplier)
     {
         $request->validate([
             'name' => 'sometimes|required|string|max:255',
-            'type' => 'sometimes|required|string|in:carga,bateria',
+            'component_type' => 'sometimes|required|string|max:255',
             'latitude' => 'sometimes|required|numeric|between:-90,90',
             'longitude' => 'sometimes|required|numeric|between:-180,180',
         ]);
 
-        $station->update($request->all());
+        $supplier->update($request->all());
 
-        return $station;
+        return $supplier;
     }
 
-    public function destroy(ChargingStation $station)
+    public function destroy(Supplier $supplier)
     {
-        $station->delete();
+        $supplier->delete();
 
         return response()->json(null, 204);
     }

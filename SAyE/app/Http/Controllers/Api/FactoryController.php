@@ -3,50 +3,48 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\ChargingStation;
+use App\Models\Factory;
 use Illuminate\Http\Request;
 
-class ChargingStationController extends Controller
+class FactoryController extends Controller
 {
     public function index()
     {
-        return ChargingStation::all();
+        return Factory::all();
     }
 
     public function store(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'type' => 'required|string|in:carga,bateria',
             'latitude' => 'required|numeric|between:-90,90',
             'longitude' => 'required|numeric|between:-180,180',
         ]);
 
-        return ChargingStation::create($request->all());
+        return Factory::create($request->all());
     }
 
-    public function show(ChargingStation $station)
+    public function show(Factory $factory)
     {
-        return $station;
+        return $factory;
     }
 
-    public function update(Request $request, ChargingStation $station)
+    public function update(Request $request, Factory $factory)
     {
         $request->validate([
             'name' => 'sometimes|required|string|max:255',
-            'type' => 'sometimes|required|string|in:carga,bateria',
             'latitude' => 'sometimes|required|numeric|between:-90,90',
             'longitude' => 'sometimes|required|numeric|between:-180,180',
         ]);
 
-        $station->update($request->all());
+        $factory->update($request->all());
 
-        return $station;
+        return $factory;
     }
 
-    public function destroy(ChargingStation $station)
+    public function destroy(Factory $factory)
     {
-        $station->delete();
+        $factory->delete();
 
         return response()->json(null, 204);
     }
