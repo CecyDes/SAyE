@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents, Polyline, useMap } from 'react-leaflet';
-import L from 'leaflet';
+import * as L from 'leaflet';
 import axios from 'axios';
 import 'leaflet/dist/leaflet.css';
 
 const chargingIcon = new L.Icon({
-  iconUrl: 'https://cdn-icons-png.flaticon.com/512/1048/1048310.png',
+  iconUrl: 'https://cdn-icons-png.flaticon.com/512/3039/3039858.png',
   iconSize: [30, 30],
   iconAnchor: [15, 30],
 });
 
 const batteryIcon = new L.Icon({
-  iconUrl: 'https://cdn-icons-png.flaticon.com/512/1828/1828778.png',
+  iconUrl: 'https://cdn-icons-png.flaticon.com/512/929/929580.png',
   iconSize: [30, 30],
   iconAnchor: [15, 30],
 });

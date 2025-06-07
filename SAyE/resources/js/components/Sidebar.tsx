@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 interface SidebarProps {
   setView: (view: 'mapa' | 'estadisticas' | 'rv') => void;

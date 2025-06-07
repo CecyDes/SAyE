@@ -1,15 +1,14 @@
-// resources/js/components/FactoriesMap.tsx
-
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
-import L from 'leaflet';
+import * as L from 'leaflet';
 import axios from 'axios';
 import 'leaflet/dist/leaflet.css';
 
 const factoryIcon = new L.Icon({
-  iconUrl: 'https://cdn-icons-png.flaticon.com/512/1055/1055687.png',
-  iconSize: [30, 30],
-  iconAnchor: [15, 30],
+  iconUrl: 'https://cdn-icons-png.flaticon.com/512/1483/1483645.png',
+  iconSize: [36, 36],
+  iconAnchor: [18, 36],
+  popupAnchor: [0, -36],
 });
 
 type Factory = {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 
 type ChargingStation = {
@@ -36,7 +36,7 @@ export default function StatsView() {
       </div>
 
       <div className="bg-white p-4 rounded shadow">
-        <p><strong>Rutas creadas:</strong> {routes.length}</p>
+        <p><strong>Rutas Existentes:</strong> {routes.length}</p>
       </div>
     </div>
   );

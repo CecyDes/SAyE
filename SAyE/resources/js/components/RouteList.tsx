@@ -1,55 +1,57 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { FaMapMarkedAlt } from 'react-icons/fa';
 
-type Route = {
+interface Route {
   id: number;
   name: string;
-  points: { latitude: number; longitude: number }[];
-};
+  origin_latitude: number;
+  origin_longitude: number;
+  destination_latitude: number;
+  destination_longitude: number;
+}
 
 export default function RouteList() {
   const [routes, setRoutes] = useState<Route[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get('/api/routes').then((res) => setRoutes(res.data));
+    axios.get('/api/routes')
+      .then((response) => {
+        setRoutes(response.data);
+      })
+      .catch((error) => {
+        console.error('Error al cargar las rutas:', error);
+      })
+      .finally(() => setLoading(false));
   }, []);
 
-  const handleDelete = (id: number) => {
-    if (confirm('¿Estás seguro de eliminar esta ruta?')) {
-      axios.delete(`/api/routes/${id}`).then(() => {
-        setRoutes((prev) => prev.filter((r) => r.id !== id));
-      });
-    }
-  };
-
   return (
-    <div className="bg-white p-4 rounded shadow">
-      <h3 className="text-lg font-semibold mb-2">Lista de Rutas</h3>
-      <table className="w-full table-auto text-sm">
-        <thead className="bg-gray-200">
-          <tr>
-            <th className="p-2 text-left">Nombre</th>
-            <th className="p-2 text-left">Puntos</th>
-            <th className="p-2 text-left">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
+    <div className="p-4 bg-white shadow-md rounded-md">
+      <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+        <FaMapMarkedAlt className="text-indigo-600" /> Lista de Rutas
+      </h2>
+
+      {loading ? (
+        <p className="text-gray-500">Cargando rutas...</p>
+      ) : routes.length === 0 ? (
+        <p className="text-gray-500 italic">No hay rutas registradas.</p>
+      ) : (
+        <div className="space-y-4">
           {routes.map((route) => (
-            <tr key={route.id} className="border-b">
-              <td className="p-2">{route.name}</td>
-              <td className="p-2">{route.points.length}</td>
-              <td className="p-2">
-                <button
-                  onClick={() => handleDelete(route.id)}
-                  className="text-red-600 hover:underline"
-                >
-                  Eliminar
-                </button>
-              </td>
-            </tr>
+            <div
+              key={route.id}
+              className="border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-shadow duration-300 bg-gray-50"
+            >
+              <h3 className="text-lg font-semibold text-indigo-700">{route.name || `Ruta #${route.id}`}</h3>
+              <div className="text-sm text-gray-700 mt-1">
+                <p><strong>Origen:</strong> ({route.origin_latitude}, {route.origin_longitude})</p>
+                <p><strong>Destino:</strong> ({route.destination_latitude}, {route.destination_longitude})</p>
+              </div>
+            </div>
           ))}
-        </tbody>
-      </table>
+        </div>
+      )}
     </div>
   );
 }

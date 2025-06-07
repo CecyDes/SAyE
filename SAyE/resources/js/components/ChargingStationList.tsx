@@ -1,76 +1,76 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { FaChargingStation } from 'react-icons/fa';
 
-type ChargingStation = {
+interface ChargingStation {
   id: number;
   name: string;
   type: string;
   latitude: number;
   longitude: number;
-};
+}
 
 export default function ChargingStationList() {
   const [stations, setStations] = useState<ChargingStation[]>([]);
 
   useEffect(() => {
-    fetchStations();
+    axios
+      .get('/api/stations')
+      .then((res) => setStations(res.data))
+      .catch((err) => console.error('Error al cargar estaciones:', err));
   }, []);
 
-  const fetchStations = async () => {
-    try {
-      const res = await axios.get('/api/stations');
-      setStations(res.data);
-    } catch (err) {
-      console.error('Error al obtener estaciones:', err);
-    }
-  };
-
-  const deleteStation = async (id: number) => {
-    if (confirm('¿Seguro que deseas eliminar esta estación?')) {
-      try {
-        await axios.delete(`/api/stations/${id}`);
-        fetchStations();
-      } catch (err) {
-        console.error('Error al eliminar estación:', err);
-      }
-    }
-  };
+  const formatCoords = (coord: any) => typeof coord === 'number' ? coord.toFixed(6) : Number(coord).toFixed(6);
 
   return (
     <div>
-      <h2 className="text-xl font-semibold mb-4">Estaciones de Carga</h2>
-      <table className="min-w-full border border-gray-200 text-sm">
-        <thead className="bg-gray-100">
-          <tr>
-            <th className="border px-4 py-2">ID</th>
-            <th className="border px-4 py-2">Nombre</th>
-            <th className="border px-4 py-2">Tipo</th>
-            <th className="border px-4 py-2">Latitud</th>
-            <th className="border px-4 py-2">Longitud</th>
-            <th className="border px-4 py-2">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {stations.map((station) => (
-            <tr key={station.id}>
-              <td className="border px-4 py-2">{station.id}</td>
-              <td className="border px-4 py-2">{station.name}</td>
-              <td className="border px-4 py-2">{station.type}</td>
-              <td className="border px-4 py-2">{station.latitude}</td>
-              <td className="border px-4 py-2">{station.longitude}</td>
-              <td className="border px-4 py-2 space-x-2">
-                {/* Aquí podrías agregar edición si gustas */}
-                <button
-                  onClick={() => deleteStation(station.id)}
-                  className="text-red-600 hover:underline"
-                >
-                  Eliminar
-                </button>
-              </td>
+      <div className="flex items-center gap-2 mb-4">
+        <FaChargingStation className="text-indigo-600 text-xl" />
+        <h2 className="text-2xl font-bold text-gray-800">Estaciones de Carga</h2>
+      </div>
+
+      <div className="overflow-x-auto">
+        <table className="w-full table-auto border border-gray-200 rounded-md text-sm shadow-sm">
+          <thead>
+            <tr className="bg-indigo-100 text-indigo-800">
+              <th className="px-3 py-2 text-left">Nombre</th>
+              <th className="px-3 py-2 text-left">Tipo</th>
+              <th className="px-3 py-2 text-left">Latitud</th>
+              <th className="px-3 py-2 text-left">Longitud</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {stations.length > 0 ? (
+              stations.map((station) => (
+                <tr key={station.id} className="hover:bg-gray-50">
+                  <td className="px-3 py-2 border-t">{station.name}</td>
+                  <td className="px-3 py-2 border-t">
+                    <span
+                      className={`px-2 py-1 rounded text-white text-xs font-medium ${
+                        station.type === 'carga'
+                          ? 'bg-blue-500'
+                          : station.type === 'bateria'
+                          ? 'bg-green-500'
+                          : 'bg-gray-400'
+                      }`}
+                    >
+                      {station.type}
+                    </span>
+                  </td>
+                  <td className="px-3 py-2 border-t">{formatCoords(station.latitude)}</td>
+                  <td className="px-3 py-2 border-t">{formatCoords(station.longitude)}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={4} className="px-4 py-4 text-center text-gray-500">
+                  No hay estaciones registradas.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

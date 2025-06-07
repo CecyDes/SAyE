@@ -1,8 +1,6 @@
-// resources/js/components/AssemblyStationsMap.tsx
-
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
-import L from 'leaflet';
+import * as L from 'leaflet';
 import axios from 'axios';
 import 'leaflet/dist/leaflet.css';
 

@@ -9,7 +9,10 @@ return new class extends Migration {
     {
         Schema::create('routes', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->decimal('origin_latitude', 10, 7);
+            $table->decimal('origin_longitude', 10, 7);
+            $table->decimal('destination_latitude', 10, 7);
+            $table->decimal('destination_longitude', 10, 7);
             $table->timestamps();
         });
     }

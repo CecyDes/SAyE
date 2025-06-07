@@ -1,21 +1,14 @@
-// resources/js/components/ShipmentsMap.tsx
-
-import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Polyline, useMapEvents, Popup } from 'react-leaflet';
-import L from 'leaflet';
+import { useEffect, useState } from 'react';
+import { MapContainer, TileLayer, Marker, Polyline, useMapEvents, Popup, Tooltip } from 'react-leaflet';
+import * as L from 'leaflet';
 import axios from 'axios';
 import 'leaflet/dist/leaflet.css';
 
 const factoryIcon = new L.Icon({
-  iconUrl: 'https://cdn-icons-png.flaticon.com/512/809/809957.png',
-  iconSize: [30, 30],
-  iconAnchor: [15, 30],
-});
-
-const assemblyIcon = new L.Icon({
-  iconUrl: 'https://cdn-icons-png.flaticon.com/512/2942/2942846.png',
-  iconSize: [30, 30],
-  iconAnchor: [15, 30],
+  iconUrl: 'https://cdn-icons-png.flaticon.com/512/891/891419.png',
+  iconSize: [36, 36],
+  iconAnchor: [18, 36],
+  popupAnchor: [0, -36],
 });
 
 type Factory = {
@@ -45,13 +38,12 @@ export default function ShipmentsMap() {
   const [factories, setFactories] = useState<Factory[]>([]);
   const [assemblies, setAssemblies] = useState<AssemblyStation[]>([]);
   const [shipments, setShipments] = useState<Shipment[]>([]);
-
   const [selectedFactory, setSelectedFactory] = useState<Factory | null>(null);
 
   useEffect(() => {
-    axios.get('/api/factories').then((res) => setFactories(res.data));
-    axios.get('/api/assembly-stations').then((res) => setAssemblies(res.data));
-    axios.get('/api/shipments').then((res) => setShipments(res.data));
+    axios.get('/api/factories').then(res => setFactories(res.data));
+    axios.get('/api/assembly-stations').then(res => setAssemblies(res.data));
+    axios.get('/api/shipments').then(res => setShipments(res.data));
   }, []);
 
   const handleMapClick = (e: any) => {
@@ -71,17 +63,15 @@ export default function ShipmentsMap() {
       if (nearestAssembly) {
         const component = prompt('¿Qué componente se envía?');
         if (component) {
-          axios
-            .post('/api/shipments', {
-              factory_id: selectedFactory.id,
-              assembly_station_id: nearestAssembly.id,
-              component,
-            })
-            .then((res) => {
-              setShipments([...shipments, res.data]);
-              setSelectedFactory(null);
-              alert('Envío registrado');
-            });
+          axios.post('/api/shipments', {
+            factory_id: selectedFactory.id,
+            assembly_station_id: nearestAssembly.id,
+            component,
+          }).then(res => {
+            setShipments([...shipments, res.data]);
+            setSelectedFactory(null);
+            alert('Envío registrado');
+          });
         }
       }
     }
@@ -93,10 +83,10 @@ export default function ShipmentsMap() {
   }
 
   return (
-    <div style={{ height: '100%', width: '100%' }}>
+    <div className="h-full w-full">
       <MapContainer
         center={[19.4326, -99.1332]}
-        zoom={12}
+        zoom={6}
         style={{ height: '100%', width: '100%' }}
       >
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
@@ -108,17 +98,9 @@ export default function ShipmentsMap() {
             position={[factory.latitude, factory.longitude]}
             icon={factoryIcon}
           >
-            <Popup>{factory.name}</Popup>
-          </Marker>
-        ))}
-
-        {assemblies.map((station) => (
-          <Marker
-            key={station.id}
-            position={[station.latitude, station.longitude]}
-            icon={assemblyIcon}
-          >
-            <Popup>{station.name}</Popup>
+            <Popup>
+              <b>Fábrica:</b> {factory.name}
+            </Popup>
           </Marker>
         ))}
 
@@ -129,8 +111,14 @@ export default function ShipmentsMap() {
               [shipment.factory.latitude, shipment.factory.longitude],
               [shipment.assembly_station.latitude, shipment.assembly_station.longitude],
             ]}
-            color="green"
-          />
+            pathOptions={{ color: 'orange', weight: 4, dashArray: '5, 5' }}
+          >
+            <Tooltip sticky>
+              Componente: <b>{shipment.component}</b><br />
+              Origen: {shipment.factory.name}<br />
+              Destino: {shipment.assembly_station.name}
+            </Tooltip>
+          </Polyline>
         ))}
       </MapContainer>
     </div>

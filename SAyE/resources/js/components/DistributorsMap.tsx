@@ -1,13 +1,11 @@
-// resources/js/components/DistributorsMap.tsx
-
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
-import L from 'leaflet';
+import * as L from 'leaflet';
 import axios from 'axios';
 import 'leaflet/dist/leaflet.css';
 
 const distributorIcon = new L.Icon({
-  iconUrl: 'https://cdn-icons-png.flaticon.com/512/535/535137.png',
+  iconUrl: 'https://cdn-icons-png.flaticon.com/512/985/985696.png',
   iconSize: [30, 30],
   iconAnchor: [15, 30],
 });
