@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\FactoryController;
 use App\Http\Controllers\Api\RouteController;
 use App\Http\Controllers\Api\ShipmentController;
 use App\Http\Controllers\Api\SupplierController;
+use App\Http\Controllers\Api\StationController;
 use Illuminate\Support\Facades\Route;
 
 Route::apiResource('stations', ChargingStationController::class);
@@ -16,3 +17,5 @@ Route::apiResource('distributors', DistributorController::class);
 Route::apiResource('factories', FactoryController::class);
 Route::apiResource('assembly-stations', AssemblyStationController::class);
 Route::apiResource('shipments', ShipmentController::class);
+Route::get('/stations', [ChargingStationController::class, 'index']);
+Route::get('/routes', [RouteController::class, 'index']);

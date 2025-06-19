@@ -10,7 +10,8 @@ class ChargingStationController extends Controller
 {
     public function index()
     {
-        return ChargingStation::all();
+        $stations = ChargingStation::all();
+        return response()->json($stations);
     }
 
     public function store(Request $request)
